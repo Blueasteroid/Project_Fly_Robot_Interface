@@ -3,7 +3,7 @@ import time
 import numpy
 import scipy.io as sio
 import threading
-
+import sys
 #import matplotlib.pyplot as pylab
 
 #=======================================================
@@ -164,22 +164,54 @@ if __name__ == '__main__':
 #    w = 360
 #    tLmt = SM_step / w
 
-#-------------------------
+
     div = 10
-    for i in range(div):
-        w = 180+180*(i+1)/div
-        
-        AI = AI_threading(w)
-        AO = AO_threading(w)
+#-------------------------
+    if len(sys.argv)==2:
+        if str(sys.argv[1])=='test':
+            
+            for i in range(div):
+                w = 180+180*(i+1)/div
+                
+                print "Testing angular velocity: %d" %(w)
+                
+                AO = AO_threading(w)
+                AO.start()
 
-        AI.start()
-        time.sleep(0.5)
-        AO.start()
+                while AO.is_alive():
+                    pass
+    elif len(sys.argv)==3:
+        if str(sys.argv[1])=='test':
+            w = int(sys.argv[2])
+            
+            if w>360:
+                w=360
+            elif w<180:
+                w=180
+            else:
+                pass
+            
+            print "Testing angular velocity: %d" %(w)
+            AO = AO_threading(w)
+            AO.start()
+            while AO.is_alive():
+                pass
+    else:
+#            div = 10
+        for i in range(div):
+            w = 180+180*(i+1)/div
+            
+            AI = AI_threading(w)
+            AO = AO_threading(w)
 
-        while AO.is_alive():
-            pass
-        while AI.is_alive():
-            pass
+            AI.start()
+            time.sleep(0.5)
+            AO.start()
+
+            while AO.is_alive():
+                pass
+            while AI.is_alive():
+                pass
             
         
   
