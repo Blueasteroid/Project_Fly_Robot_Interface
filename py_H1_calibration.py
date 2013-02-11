@@ -117,7 +117,7 @@ class AI_threading(threading.Thread):
 
         print "Recording complete! "
         vect = self.data
-        filename = 'Data_3Ch_CALI_' + str(self.w) + 'degHz_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + '].mat'
+        filename = 'Data_3Ch_NAT5_' + str(self.w) + 'degHz_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + '].mat'
         sio.savemat (filename,{'vect':vect})
         print "Data saved! in file: %s" % (filename)   #... debug
         
@@ -170,8 +170,8 @@ if __name__ == '__main__':
     if len(sys.argv)==2:
         if str(sys.argv[1])=='test':
             
-            for i in range(div):
-                w = 180+180*(i+1)/div
+            for i in range(1,div):
+                w = 540*(i+1)/div
                 
                 print "Testing angular velocity: %d" %(w)
                 
@@ -184,10 +184,10 @@ if __name__ == '__main__':
         if str(sys.argv[1])=='test':
             w = int(sys.argv[2])
             
-            if w>360:
-                w=360
-            elif w<180:
-                w=180
+            if w>720:
+                w=720
+            elif w<54:
+                w=54
             else:
                 pass
             
@@ -198,8 +198,8 @@ if __name__ == '__main__':
                 pass
     else:
 #            div = 10
-        for i in range(div):
-            w = 180+180*(i+1)/div
+        for i in range(1,div):
+            w = 540*(i+1)/div
             
             AI = AI_threading(w)
             AO = AO_threading(w)
