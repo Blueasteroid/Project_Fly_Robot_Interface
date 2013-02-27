@@ -33,7 +33,7 @@ def stim(w=360):
     XX = numpy.zeros(numpy.size(X))
     for i in range(1,numpy.size(XX)): XX[i] = XX[i-1] + dX[i]
 
-    #  pylab.plot(X,Y);pylab.show();
+    #    pylab.plot(X,Y);pylab.show();
 
     AO_resolution = 5e-6          # (us) resolution: 200k Hz maximum, the period of which is 5 us    
 
@@ -171,6 +171,8 @@ class AI_threading(threading.Thread):
     def __init__(self,w):#,t):
         threading.Thread.__init__( self )
         
+        self.name = 'CALI'        
+        
         self.w = w
 #        self.t = t
         self.AI_rate = 20000
@@ -195,7 +197,7 @@ class AI_threading(threading.Thread):
 
         print "Recording complete! "
         vect = self.data
-        matfilename = 'Data_3Ch_CALI_' + str(self.w) + 'degHz_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + '].mat'
+        matfilename = 'Data_3Ch_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + ']_' + self.name + '_' + str(self.w) + 'degHz.mat'
         sio.savemat (matfilename,{'vect':vect})
         print "Data saved! in file: %s" % (matfilename)   #... debug
         
