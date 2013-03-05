@@ -168,22 +168,22 @@ def stim_gen(w=30, t=3):
 #del DO
 #=======================================================
 class AI_threading(threading.Thread):
-    def __init__(self,w):#,t):
+    def __init__(self, name, w):#,t):
         threading.Thread.__init__( self )
         
-        self.name = 'CALI'        
+        self.name = name        
         
         self.w = w
 #        self.t = t
         self.AI_rate = 20000
-        self.sampling_time = 10     #... second
+        self.sampling_time = 20     #... second
         self.channel = 3
         self.max_num_samples = self.AI_rate * self.sampling_time * self.channel
         self.data = numpy.zeros(self.max_num_samples)  #numpy.zeros((max_num_samples,),dtype=numpy.float64)
         
     def run(self):
         AI_task = AnalogInputTask()
-        AI_task.create_voltage_channel('Dev6/ai1:3', terminal = 'diff',min_val=-10.0, max_val=10.0)
+        AI_task.create_voltage_channel('Dev6/ai1:3', terminal = 'diff', min_val=-10.0, max_val=10.0)
         AI_task.configure_timing_sample_clock(rate = self.AI_rate)
 
         #del task
@@ -193,7 +193,7 @@ class AI_threading(threading.Thread):
         
         print "Recording... "     #... debug
         AI_task.start()
-        self.data = AI_task.read(samples_per_channel= self.AI_rate * self.sampling_time, fill_mode='group_by_channel')
+        self.data = AI_task.read(samples_per_channel= self.AI_rate * self.sampling_time, fill_mode='group_by_channel',timeout = self.sampling_time )
 
         print "Recording complete! "
         vect = self.data
@@ -251,9 +251,10 @@ if __name__ == '__main__':
 #    w = 360    # for easier data processingmax_w
 #    tLmt = SM_step / w
 
-    max_w = 300
-    div = 10
-    t=3
+#    max_w = 300
+#    div = 10
+#    t = 3   
+#    name = 'NAT5'
     
 #------------------------- 
     '''
@@ -306,11 +307,20 @@ if __name__ == '__main__':
                 pass
     else:
     '''        
+    
+    max_w = 300
     div = 10
-    for i in range(div):
+    t = 3
+    name = 'TOP0'
+    
+    div = 10
+    seq = numpy.arange(div)
+    numpy.random.shuffle(seq)
+#    for i in range(div):   
+    for i in seq:
         w = max_w*(i+1)/div
         
-        AI = AI_threading(w)
+        AI = AI_threading(name, w)
         AO = AO_threading(w,t)
 
         AI.start()
