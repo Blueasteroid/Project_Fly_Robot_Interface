@@ -313,7 +313,7 @@ if __name__ == '__main__':
     '''        
     
     max_w = 300
-    div = 10
+#    div = 10
     t = 3
     div = 10  
     
@@ -337,6 +337,7 @@ if __name__ == '__main__':
 #==========================================   
 
     seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
+    div = numpy.size (seq)
     if ((num % 2) is 1):
         seq = seq[::-1]
 
