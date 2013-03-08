@@ -69,7 +69,7 @@ def stim(w=360):
     return stim
 '''
 
-def stim_gen(w=30, t=3):
+def stim_gen(w=30, t=3, dir_seq = 0):
     SM_step = 360.0/5000.0      #...step(/microstep) angle (degree)
 #    Fs = w/SM_step    
     Fs=200000
@@ -124,7 +124,10 @@ def stim_gen(w=30, t=3):
     
     SM_dir_CW = 5*numpy.ones(L,dtype=numpy.float64)
     SM_dir_CCW = numpy.zeros(L,dtype=numpy.float64)
-    SM_dir = numpy.append(SM_dir_CW,SM_dir_CCW)
+    if (dir_seq is 0):
+        SM_dir = numpy.append(SM_dir_CW,SM_dir_CCW)
+    else:
+        SM_dir = numpy.append(SM_dir_CCW,SM_dir_CW)
     
 
     # for easier data processing
@@ -204,14 +207,15 @@ class AI_threading(threading.Thread):
 #=======================================================        
 
 class AO_threading(threading.Thread):
-    def __init__(self,w,t):
+    def __init__(self,w,stim):
         threading.Thread.__init__( self )
 
 #        self.sampling_time = 10      #... second
         self.w = w
-        self.t = t
-        stim=stim_gen(w=self.w, t=self.t)
-        self.AO_data = stim['data']     # <<=== stimulus loading ===
+        self.t = 3
+#        stim=stim_gen(w=self.w, t=self.t, seq=1)
+        self.stim=stim
+        self.AO_data = self.stim['data']     # <<=== stimulus loading ===
         self.AO_rate = 200000        
     
     def run(self):
@@ -311,17 +315,39 @@ if __name__ == '__main__':
     max_w = 300
     div = 10
     t = 3
-    name = 'TOP0'
+    div = 10  
     
-    div = 10
-    seq = numpy.arange(div)
-    numpy.random.shuffle(seq)
-#    for i in range(div):   
+#========= parameter setting ==================== 
+    num = 1 
+    name = 'BOT' + str(num)
+    dir_seq = 0
+    
+#========= test run ==================== 
+    w = 60
+    stim=stim_gen(w, t, dir_seq )   
+    AO = AO_threading(w,stim)
+    AO.start()
+    while AO.is_alive():
+        pass
+    
+    
+#========= seq shuffle ====================   
+#    seq = numpy.arange(div)
+#    numpy.random.shuffle(seq)
+#==========================================   
+
+    seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
+    if ((num % 2) is 1):
+        seq = seq[::-1]
+
+
     for i in seq:
         w = max_w*(i+1)/div
         
+        stim=stim_gen(w, t, dir_seq )    
+        
         AI = AI_threading(name, w)
-        AO = AO_threading(w,t)
+        AO = AO_threading(w,stim)
 
         AI.start()
         time.sleep(0.5)
