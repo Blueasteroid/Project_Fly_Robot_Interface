@@ -179,7 +179,7 @@ class AI_threading(threading.Thread):
         self.w = w
 #        self.t = t
         self.AI_rate = 20000
-        self.sampling_time = 20     #... second
+        self.sampling_time = 10     #... second
         self.channel = 3
         self.max_num_samples = self.AI_rate * self.sampling_time * self.channel
         self.data = numpy.zeros(self.max_num_samples)  #numpy.zeros((max_num_samples,),dtype=numpy.float64)
@@ -317,47 +317,56 @@ if __name__ == '__main__':
     t = 3
     div = 10  
     
+    
+    
+    
+    
+    for k in range(div): #numpy.array([0,1,2,3,4,5,6,7,8,9]):
+    
 #========= parameter setting ==================== 
-    num = 1 
-    name = 'BOT' + str(num)
-    dir_seq = 0
-    
-#========= test run ==================== 
-    w = 60
-    stim=stim_gen(w, t, dir_seq )   
-    AO = AO_threading(w,stim)
-    AO.start()
-    while AO.is_alive():
-        pass
-    
-    
-#========= seq shuffle ====================   
-#    seq = numpy.arange(div)
-#    numpy.random.shuffle(seq)
-#==========================================   
 
-    seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
-    div = numpy.size (seq)
-    if ((num % 2) is 1):
-        seq = seq[::-1]
-
-
-    for i in seq:
-        w = max_w*(i+1)/div
+        num = k
         
-        stim=stim_gen(w, t, dir_seq )    
         
-        AI = AI_threading(name, w)
+        name = 'TOP' + str(num)
+        dir_seq = 1
+        # NAT,BOT = 0, TOP = 1
+        
+        
+    #========= test run ==================== 
+        print "Test run... "
+        w = 60
+        stim=stim_gen(w, t, dir_seq )   
         AO = AO_threading(w,stim)
-
-        AI.start()
-        time.sleep(0.5)
         AO.start()
-
         while AO.is_alive():
             pass
-        while AI.is_alive():
-            pass
-
-      
-  
+        print "Test run over. "
+        
+    #========= seq shuffle ====================   
+    #    seq = numpy.arange(div)
+    #    numpy.random.shuffle(seq)
+    #==========================================   
+    
+        seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
+        div = numpy.size (seq)
+        if ((num % 2) is 1):
+            seq = seq[::-1]
+    
+    
+        for i in seq:
+            w = max_w*(i+1)/div
+            
+            stim=stim_gen(w, t, dir_seq )    
+            
+            AI = AI_threading(name, w)
+            AO = AO_threading(w,stim)
+    
+            AI.start()
+            time.sleep(0.5)
+            AO.start()
+    
+            while AO.is_alive():
+                pass
+            while AI.is_alive():
+                pass
