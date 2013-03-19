@@ -1,4 +1,4 @@
-function result = FR2W_collection(file, sum_period)
+function result = Func_FR_collection(file, sum_period)
 
 % file='H:\[DAQ_DATA]\Data_3Ch_[2013-03-16_22-40-06]_TOP9_180degHz.mat'
 
