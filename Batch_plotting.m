@@ -16,7 +16,7 @@ for i = 1:length(dirListing)
 
         hFig = figure (1);
         set(hFig,'Visible','off');
-        Data_processing_ISI_plotting(fileName, hFig);
+        Func_ISI_plotting(fileName, hFig);
 
         [foldername, filename, extname] = fileparts(fileName);
 
