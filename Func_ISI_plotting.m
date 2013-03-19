@@ -1,4 +1,4 @@
-function figH = Data_processing_ISI_plotting(file_location, figH)
+function figH = Func_ISI_plotting(file_location, figH)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Jiaqi (Joseph) Huang
 % Imperial College London
