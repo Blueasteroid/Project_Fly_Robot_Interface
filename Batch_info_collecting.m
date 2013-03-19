@@ -25,7 +25,7 @@ for i = 1:length(dirListing)
 %         set(hFig,'Visible','off');=87 
 %         Data_processing_ISI_plotting(fileName, hFig);
 
-        data = FR_collection_100ms(fileName, T_samp/1000);
+        data = Func_FR_collection(fileName, T_samp/1000);
         data = [data;i];
         info = [info data];
         
