@@ -114,8 +114,9 @@ class AI_threading(threading.Thread):
 
         print "Recording complete! "
         vect = self.data
-        matfilename = 'Data_3Ch_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + ']_' + self.name + '_' + str(self.w) + 'degHz.mat'
-        sio.savemat (matfilename,{'vect':vect})
+        folder = 'H:\\[DAQ_DATA]'
+        matfilename = '\\Data_3Ch_[' + time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime()) + ']_' + self.name + '_' + str(self.w) + 'degHz.mat'
+        sio.savemat ((folder+matfilename),{'vect':vect})
         print "Data saved! in file: %s" % (matfilename)   #... debug
         
 #=======================================================        
@@ -151,63 +152,97 @@ class AO_threading(threading.Thread):
 if __name__ == '__main__':
     
     
+    if (len(sys.argv) != 3):
+        print 'Error: arguments number (2 arguments needed)'
+        exit()    
+        
+#    for i in range(len(sys.argv)):
+#        print i
+#        print sys.argv[i]
+#    exit() 
+ 
+    SM = sys.argv[1]
+    idx = int(sys.argv[2])
+#    val = int(sys.argv[3])
+#    print (SM)
+#    print (rep)
+#    print (val)    
+#    exit() 
+   
     max_w = 300
 #    div = 10
     t = 3
     div = 10  
+    rep = 10
     
     
-    SM = 'BOT'   
+    
+    
+    
+#    SM = 'BOT'  
+#    SM = 'TOP'  
+
+
+
+
+    
     # dir_seq = 0
     # NAT,BOT = 0, TOP = 1
     if (SM=='BOT'): dir_seq = 0
-    if (SM=='TOP'): dir_seq = 1
+    elif (SM=='TOP'): dir_seq = 1
+    else: 
+        print 'Error: actuator selection (either TOP or BOT)'
+        sys.exit()
     
-    for k in range(div): 
+    
+#========= test run ==================== 
+    print "Test run... "
+    w = 60
+    stim=stim_gen(w, t, dir_seq )   
+    AO = AO_threading(w,stim)
+    AO.start()
+    while AO.is_alive():
+        pass
+    print "Test run over. "
+        
+#========= run ====================    
+    for k in range(idx, rep*div): 
     
 #========= parameter setting ==================== 
 
-        num = k
-        
+        num = int(numpy.fix(k/div))
         name = SM + str(num)
 
-    #========= test run ==================== 
-        print "Test run... "
-        w = 60
-        stim=stim_gen(w, t, dir_seq )   
-        AO = AO_threading(w,stim)
-        AO.start()
-        while AO.is_alive():
-            pass
-        print "Test run over. "
-        
-    #========= seq shuffle ====================   
-    #    seq = numpy.arange(div)
-    #    numpy.random.shuffle(seq)
-    #==========================================   
+        #========= seq shuffle ====================   
+        #    seq = numpy.arange(div)
+        #    numpy.random.shuffle(seq)
+        #==========================================   
     
         # angv = numpy.array([5, 10, 15, 30, 45, 60, 75, 120, 195, 300])
         angv = numpy.array([3, 15, 45, 60, 75, 120, 165, 210, 255, 300]) 
         seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
-        div = numpy.size (seq)
+#        div = numpy.size (seq)
         if ((num % 2) is 1):
             seq = seq[::-1]
     
     
-        for i in seq:
+#        for i in range(len(seq)):
             #w = max_w*(i+1)/div
-            w = angv[i]            
-            
-            stim=stim_gen(w, t, dir_seq )    
-            
-            AI = AI_threading(name, w)
-            AO = AO_threading(w,stim)
-    
-            AI.start()
-            time.sleep(0.5)
-            AO.start()
-    
-            while AO.is_alive():
-                pass
-            while AI.is_alive():
-                pass
+        i = int(numpy.mod(k,div))
+        w = angv[seq[i]]            
+        
+        stim=stim_gen(w, t, dir_seq )    
+        
+        AI = AI_threading(name, w)
+        AO = AO_threading(w,stim)
+
+        AI.start()
+        time.sleep(0.5)
+        AO.start()
+
+        while AO.is_alive():
+            pass
+        while AI.is_alive():
+            pass
+
+    print 'End of experiment!'
