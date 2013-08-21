@@ -2,7 +2,7 @@
 """
 Created on Fri Aug 09 18:27:06 2013
 
-@author: jh4209
+@author: Jiaqi Huang (Imperial College London)
 """
 
 from nidaqmx import *
