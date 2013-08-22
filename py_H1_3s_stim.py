@@ -33,7 +33,7 @@ def stim_gen(w=30, t=3, dir_seq = 0):
     
 # -------------------------------------------------------
 #    amp=360.0
-    freq = 1
+    freq = 3
     amp = w/(2*numpy.pi*freq)
     Y = numpy.arange(0,amp,SM_step)   
     X = (1/(2*numpy.pi*freq))*numpy.arcsin(Y/amp)
@@ -138,7 +138,7 @@ class AO_threading(threading.Thread):
 #        rep = int(self.sampling_time / (tLmt*2*5000+1))
 #        for i in range(rep):
         AO_task = AnalogOutputTask()
-        AO_task.create_voltage_channel('Dev5/ao0:1', min_val=-10.0, max_val=10.0)
+        AO_task.create_voltage_channel('Dev6/ao0:1', min_val=-10.0, max_val=10.0)
         AO_task.configure_timing_sample_clock(rate = self.AO_rate) 
         AO_task.set_regeneration(0)
         AO_task.write(self.AO_data, auto_start=False, layout = 'group_by_channel')
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     
     # dir_seq = 0
     # NAT,BOT = 0, TOP = 1
-    if (SM=='BOT'): dir_seq = 0
+    if (SM=='BOT' or SM=='TEST'): dir_seq = 0
     elif (SM=='TOP'): dir_seq = 1
     else: 
         print 'Error: actuator selection (either TOP or BOT)'
@@ -198,12 +198,17 @@ if __name__ == '__main__':
 #========= test run ==================== 
     print "Test run... "
     w = 60
+    
+    if (SM=="TEST"): w=idx
+        
     stim=stim_gen(w, t, dir_seq )   
     AO = AO_threading(w,stim)
     AO.start()
     while AO.is_alive():
         pass
     print "Test run over. "
+        
+    if (SM=="TEST"): sys.exit() 
         
 #========= run ====================    
     for k in range(idx, rep*div): 
@@ -220,6 +225,7 @@ if __name__ == '__main__':
     
         # angv = numpy.array([5, 10, 15, 30, 45, 60, 75, 120, 195, 300])
         angv = numpy.array([3, 15, 45, 60, 75, 120, 165, 210, 255, 300]) 
+#        angv = numpy.array([60, 60, 60, 60, 60, 60, 60, 60, 60, 60]) 
         seq = numpy.array([5,0,1,6,9,8,3,7,2,4])
 #        div = numpy.size (seq)
         if ((num % 2) is 1):
@@ -235,6 +241,8 @@ if __name__ == '__main__':
         
         AI = AI_threading(name, w)
         AO = AO_threading(w,stim)
+
+        print "Exp: %d/99" % k
 
         AI.start()
         time.sleep(0.5)
