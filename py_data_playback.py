@@ -2,7 +2,7 @@
 """
 Created on Fri Aug 09 18:27:06 2013
 
-@author: Jiaqi Huang (Imperial College London)
+@author: jh4209
 """
 
 from nidaqmx import *
@@ -17,12 +17,12 @@ import sys
 #=======================================================        
 
 class AO_threading(threading.Thread):
-    def __init__(self,w,stim):
+    def __init__(self,t,stim):
         threading.Thread.__init__( self )
 
 #        self.sampling_time = 10      #... second
-        self.w = w
-        self.t = 10
+        #self.w = w
+        self.t = t
 #        stim=stim_gen(w=self.w, t=self.t, seq=1)
         #self.stim=stim
         self.AO_data = stim #self.stim['data']     # <<=== stimulus loading ===
@@ -35,7 +35,7 @@ class AO_threading(threading.Thread):
         AO_task = AnalogOutputTask()
         AO_task.create_voltage_channel('Dev6/ao0:1', min_val=-10.0, max_val=10.0)
         AO_task.configure_timing_sample_clock(rate = self.AO_rate) 
-        AO_task.set_regeneration(0)
+        AO_task.set_regeneration(1)
         AO_task.write(self.AO_data, auto_start=False, layout = 'group_by_channel')
         AO_task.start()
 #            print "Stimulation repetition: %d / %d" %((i+1),rep)
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     
     
    
-    matfile = 'H:\[DAQ_DATA]\Data_3Ch_[2013-07-22_19-43-29]_TOP9_60degHz'
+    matfile = 'D:\Jiaqi\data_2013-08-30\Data_3Ch_[2013-08-30_21-35-41]_TOP9_60degHz'
     print 'Loading...'
     print matfile
     
@@ -62,7 +62,7 @@ if __name__ == '__main__':
 #    output = numpy.tile([1,0],200000)
 
         
-    AO = AO_threading(0,output)
+    AO = AO_threading(30,output)
 
     print "Replaying... " 
     #print matfile
@@ -73,4 +73,4 @@ if __name__ == '__main__':
         pass
 
 
-    print 'End'
+    print 'Done.'
